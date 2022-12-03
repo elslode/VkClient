@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">VkClient</string>
     <string name="default_text_post">asdkf asdfkljadsk asdflkajdfk asdf klajsdfk</string>
+    
+    <string name="navigation_item_main">Main</string>
+    <string name="navigation_item_favourite">Favourite</string>
+    <string name="navigation_item_profile">Profile</string>
 </resources>
