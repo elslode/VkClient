@@ -12,13 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import com.bibliographer.vkclient.ui.theme.InstagramProfileCard
 import com.bibliographer.vkclient.ui.theme.VkClientTheme
 
 class MainActivity : ComponentActivity() {
 
+    private val viewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             VkClientTheme {
                 Box(
@@ -26,7 +30,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colors.background),
                 ) {
-                    InstagramProfileCard()
+                    InstagramProfileCard(viewModel)
                 }
             }
         }

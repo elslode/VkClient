@@ -6,11 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,11 +23,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bibliographer.vkclient.MainViewModel
 import com.bibliographer.vkclient.R
+import java.sql.Statement
 
-@Preview
 @Composable
-fun InstagramProfileCard() {
+fun InstagramProfileCard(
+    viewModel: MainViewModel
+) {
+
+    val isFollowed = viewModel.isFollowed.observeAsState(false)
+
     Card(
         shape = RoundedCornerShape(
             topEnd = 4.dp,
@@ -42,7 +48,9 @@ fun InstagramProfileCard() {
             LogoApp()
             HashTagsLogo()
             LinkApp()
-            ButtonFollow()
+            ButtonFollow(isFollowed) {
+                viewModel.changeFollowingStatus()
+            }
         }
     }
 }
@@ -100,7 +108,7 @@ private fun StatisticsUser(
 
 @Preview
 @Composable
-private fun LogoApp(){
+private fun LogoApp() {
     Box(modifier = Modifier.padding(4.dp)) {
         Text(
             text = "Instagram",
@@ -111,21 +119,38 @@ private fun LogoApp(){
     }
 }
 
-@Preview
 @Composable
 private fun ButtonFollow(
+    isFollowed: State<Boolean>,
+    clickListener:() -> Unit
+) {
 
-){
-    Box(modifier= Modifier.padding(12.dp)) {
-        Button(onClick = {}) {
-            Text(text = "Follow")
+    Box(modifier = Modifier.padding(12.dp)) {
+        Button(
+            onClick = { clickListener() },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = if (isFollowed.value) {
+                    MaterialTheme.colors.primary.copy(
+                        alpha = 0.5f
+                    )
+                } else {
+                    MaterialTheme.colors.primary
+                }
+            )
+        ) {
+            val text = if (isFollowed.value) {
+                "Unfollow"
+            } else {
+                "Follow"
+            }
+            Text(text = text)
         }
     }
 }
 
 @Preview
 @Composable
-private fun HashTagsLogo(){
+private fun HashTagsLogo() {
     Box(modifier = Modifier.padding(8.dp)) {
         Text(
             text = "#YoutsToMake",
@@ -138,7 +163,7 @@ private fun HashTagsLogo(){
 
 @Preview
 @Composable
-private fun LinkApp(){
+private fun LinkApp() {
     Box(modifier = Modifier.padding(8.dp)) {
         Text(
             text = "https://www.youtube.com/watch?v=kyN8UgXi6tw",
@@ -146,24 +171,5 @@ private fun LinkApp(){
             fontStyle = FontStyle.Normal,
             fontFamily = FontFamily.Serif,
         )
-    }
-}
-
-@Preview
-@Composable
-private fun CardProfileLight() {
-    VkClientTheme(
-        darkTheme = false
-    ) {
-        InstagramProfileCard()
-    }
-}
-
-@Preview
-@Composable
-private fun CardProfileDark(
-) {
-    VkClientTheme(darkTheme = true) {
-        InstagramProfileCard()
     }
 }
