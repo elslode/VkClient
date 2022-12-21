@@ -1,6 +1,7 @@
 package com.bibliographer.vkclient.ui.theme
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
@@ -13,33 +14,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bibliographer.vkclient.R
+import com.bibliographer.vkclient.domain.FeedPost
+import com.bibliographer.vkclient.domain.StatisticItem
+import com.bibliographer.vkclient.domain.StatisticsType
 
-@Preview
 @Composable
-fun PostCard() {
-    Card {
+fun PostCard(
+    modifier: Modifier = Modifier,
+    feedPost: FeedPost,
+    onLikeClickListener: (StatisticItem) -> Unit,
+    onShareClickListener: (StatisticItem) -> Unit,
+    onCommentClickListener: (StatisticItem) -> Unit,
+    onViewClickListener: (StatisticItem) -> Unit
+) {
+    Card(
+        modifier = modifier
+    ) {
         Column(
-            modifier = Modifier.padding(8 .dp)
+            modifier = Modifier.padding(8.dp)
         ) {
-            HeaderPost()
+            HeaderPost(feedPost)
             Spacer(modifier = Modifier.padding(8.dp))
-            ContentPost()
-            ReactionUserBlockPost()
+            ContentPost(feedPost)
+            Statistics(
+                statistics = feedPost.statistics,
+                onCommentClickListener = onCommentClickListener,
+                onLikeClickListener = onLikeClickListener,
+                onShareClickListener = onShareClickListener,
+                onViewClickListener = onViewClickListener
+            )
         }
     }
 }
 
-@Preview
 @Composable
-private fun HeaderPost() {
+private fun HeaderPost(feedPostCard: FeedPost) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -50,7 +63,7 @@ private fun HeaderPost() {
                 .size(50.dp)
                 .clip(CircleShape),
             painter = painterResource(
-                id = R.drawable.post_comunity_thumbnail
+                id = feedPostCard.avatarResId
             ),
             contentDescription = null
         )
@@ -59,12 +72,12 @@ private fun HeaderPost() {
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "/dev/null",
+                text = feedPostCard.communityName,
                 color = MaterialTheme.colors.onPrimary
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = "12:12",
+                text = feedPostCard.publicationDate,
                 color = MaterialTheme.colors.onSecondary
             )
         }
@@ -76,30 +89,36 @@ private fun HeaderPost() {
     }
 }
 
-@Preview
 @Composable
-private fun ContentPost() {
+private fun ContentPost(feedPostCard: FeedPost) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),
     ) {
         Text(
             color = MaterialTheme.colors.onPrimary,
-            text = stringResource(R.string.default_text_post)
+            text = feedPostCard.contentText
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(R.drawable.post_comunity_thumbnail),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            painter = painterResource(feedPostCard.contentImageResId),
             contentDescription = null,
             contentScale = ContentScale.FillWidth
         )
     }
 }
 
-@Preview
 @Composable
-private fun ReactionUserBlockPost() {
+private fun Statistics(
+    statistics: List<StatisticItem>,
+    onLikeClickListener: (StatisticItem) -> Unit,
+    onCommentClickListener: (StatisticItem) -> Unit,
+    onShareClickListener: (StatisticItem) -> Unit,
+    onViewClickListener: (StatisticItem) -> Unit
+) {
     Row(
         modifier = Modifier.padding(8.dp)
     ) {
@@ -107,23 +126,65 @@ private fun ReactionUserBlockPost() {
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ItemReactionUsers(image = R.drawable.ic_views_count, text = "12112")
+            val viewsItem = statistics
+                .getItemByType(StatisticsType.VIEWS)
+            ItemReactionUsers(
+                image = R.drawable.ic_views_count,
+                text = viewsItem.count.toString(),
+                onIconReactionClickListener = {
+                    onViewClickListener(viewsItem)
+                }
+            )
         }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-            ) {
-            ItemReactionUsers(image = R.drawable.ic_share, text = "121")
-            ItemReactionUsers(image = R.drawable.ic_comment, text = "9")
-            ItemReactionUsers(image = R.drawable.ic_like, text = "1221")
+        ) {
+            val shareItem = statistics.getItemByType(StatisticsType.SHARES)
+            ItemReactionUsers(
+                image = R.drawable.ic_share,
+                text = shareItem.count.toString(),
+                onIconReactionClickListener = {
+                    onShareClickListener(shareItem)
+                }
+            )
+
+            val commentItem = statistics.getItemByType(StatisticsType.COMMENTS)
+            ItemReactionUsers(
+                image = R.drawable.ic_comment,
+                text = commentItem.count.toString(),
+                onIconReactionClickListener = {
+                    onCommentClickListener(commentItem)
+                }
+            )
+
+            val likeItem = statistics.getItemByType(StatisticsType.LIKES)
+            ItemReactionUsers(
+                image = R.drawable.ic_like,
+                text = likeItem.count.toString(),
+                onIconReactionClickListener = {
+                    onLikeClickListener(likeItem)
+                }
+            )
         }
     }
 }
 
+private fun List<StatisticItem>.getItemByType(type: StatisticsType): StatisticItem {
+    return this.find { it.type == type } ?: throw java.lang.IllegalStateException()
+}
+
 @Composable
-private fun ItemReactionUsers(image: Int, text: String) {
-    Row {
+private fun ItemReactionUsers(
+    image: Int,
+    text: String,
+    onIconReactionClickListener: () -> Unit
+) {
+    Row(
+        modifier = Modifier.clickable { onIconReactionClickListener() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
             painter = painterResource(image),
             contentDescription = null,
