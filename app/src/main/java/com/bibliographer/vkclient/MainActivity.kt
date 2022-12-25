@@ -6,12 +6,18 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bibliographer.vkclient.ui.theme.InstagramProfileCard
 import com.bibliographer.vkclient.ui.theme.VkClientTheme
@@ -24,24 +30,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            VkClientTheme {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colors.background),
-                ) {
-                    InstagramProfileCard(viewModel)
-                }
-            }
+            Test(viewModel = viewModel)
         }
     }
 
-    @Preview
     @Composable
-    private fun TestText() {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = ""
-        )
+    private fun Test(viewModel: MainViewModel) {
+        VkClientTheme {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background),
+            ) {
+                LazyColumn {
+                    items(500) {
+                        InstagramProfileCard(viewModel)
+                    }
+                }
+            }
+        }
     }
 }
