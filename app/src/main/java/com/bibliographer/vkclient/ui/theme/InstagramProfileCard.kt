@@ -23,16 +23,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bibliographer.vkclient.InstagramModel
 import com.bibliographer.vkclient.MainViewModel
 import com.bibliographer.vkclient.R
 import java.sql.Statement
 
 @Composable
 fun InstagramProfileCard(
-    viewModel: MainViewModel
+    model: InstagramModel,
+    onFollowedButtonClickListener: (InstagramModel) -> Unit
 ) {
-
-    val isFollowed = viewModel.isFollowed.observeAsState(false)
 
     Card(
         shape = RoundedCornerShape(
@@ -45,18 +45,18 @@ fun InstagramProfileCard(
     ) {
         Column {
             RowForBox()
-            LogoApp()
-            HashTagsLogo()
+            LogoApp(model)
+            HashTagsLogo(model)
             LinkApp()
-            ButtonFollow(isFollowed) {
-                viewModel.changeFollowingStatus()
+            ButtonFollow(model.isFollowed) {
+                onFollowedButtonClickListener(model)
             }
         }
     }
 }
 
 @Composable
-private fun RowForBox() {
+fun RowForBox() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,12 +106,11 @@ private fun StatisticsUser(
     }
 }
 
-@Preview
 @Composable
-private fun LogoApp() {
+private fun LogoApp(model: InstagramModel) {
     Box(modifier = Modifier.padding(4.dp)) {
         Text(
-            text = "Instagram",
+            text = "Instagram ${model.id }",
             fontSize = 36.sp,
             fontStyle = FontStyle.Italic,
             fontFamily = FontFamily.Cursive,
@@ -121,7 +120,7 @@ private fun LogoApp() {
 
 @Composable
 private fun ButtonFollow(
-    isFollowed: State<Boolean>,
+    isFollowed: Boolean,
     clickListener:() -> Unit
 ) {
 
@@ -129,7 +128,7 @@ private fun ButtonFollow(
         Button(
             onClick = { clickListener() },
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (isFollowed.value) {
+                backgroundColor = if (isFollowed) {
                     MaterialTheme.colors.primary.copy(
                         alpha = 0.5f
                     )
@@ -138,7 +137,7 @@ private fun ButtonFollow(
                 }
             )
         ) {
-            val text = if (isFollowed.value) {
+            val text = if (isFollowed) {
                 "Unfollow"
             } else {
                 "Follow"
@@ -148,12 +147,11 @@ private fun ButtonFollow(
     }
 }
 
-@Preview
 @Composable
-private fun HashTagsLogo() {
+private fun HashTagsLogo(model: InstagramModel) {
     Box(modifier = Modifier.padding(8.dp)) {
         Text(
-            text = "#YoutsToMake",
+            text = "#${model.title}",
             fontSize = 12.sp,
             fontStyle = FontStyle.Normal,
             fontFamily = FontFamily.Monospace,
