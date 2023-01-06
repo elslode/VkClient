@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.StatisticItem
+import com.bibliographer.vkclient.ui.theme.NavigationItem
 import java.util.Collections.replaceAll
 
 class MainViewModel: ViewModel() {
@@ -13,6 +14,13 @@ class MainViewModel: ViewModel() {
         repeat(times = 10) {
             add(FeedPost(id = it))
         }
+    }
+
+    private val  _selectedItemPosition = MutableLiveData<NavigationItem>(NavigationItem.Home)
+    val selectedItemPosition: LiveData<NavigationItem> = _selectedItemPosition
+
+    fun selectNavItem(item: NavigationItem) {
+         _selectedItemPosition.value = item
     }
 
     private val _feedPosts = MutableLiveData<List<FeedPost>>(sourceList)
