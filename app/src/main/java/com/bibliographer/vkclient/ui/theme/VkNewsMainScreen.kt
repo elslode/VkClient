@@ -7,16 +7,21 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.bibliographer.vkclient.MainViewModel
+import com.bibliographer.vkclient.navigation.AppNavGraph
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
 
-    val selectedNavItem by viewModel.selectedItemPosition.observeAsState(NavigationItem.Home)
+    val navHostController = rememberNavController()
 
     Scaffold(
         bottomBar = {
             BottomNavigation {
+                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
                 val items = listOf(
                     NavigationItem.Home,
                     NavigationItem.Favourite,
@@ -24,8 +29,8 @@ fun MainScreen(viewModel: MainViewModel) {
                 )
                 items.forEach { item ->
                     BottomNavigationItem(
-                        selected = selectedNavItem == item,
-                        onClick = { viewModel.selectNavItem(item) },
+                        selected = currentRoute == item.screen.route,
+                        onClick = { navHostController.navigate(item.screen.route) },
                         icon = {
                             Icon(item.icon, contentDescription = null)
                         },
@@ -39,13 +44,17 @@ fun MainScreen(viewModel: MainViewModel) {
             }
         }
     ) { paddingValues ->
-        when (selectedNavItem) {
-            NavigationItem.Home -> {
-                HomeScreen(paddingValues = paddingValues, viewModel = viewModel)
-            }
-            NavigationItem.Profile -> TextCounter(name = "Profile")
-            NavigationItem.Favourite -> TextCounter(name = "Favourite")
-        }
+
+        AppNavGraph(
+            navHostController = navHostController,
+            homeScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    viewModel = viewModel
+                )
+            },
+            favouriteScreenContent = { TextCounter(name = "Favourite") },
+            profileScreenContent = { TextCounter(name = "Profile") })
     }
 }
 
