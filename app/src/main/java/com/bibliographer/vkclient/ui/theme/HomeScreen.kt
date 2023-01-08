@@ -15,13 +15,39 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bibliographer.vkclient.MainViewModel
+import com.bibliographer.vkclient.domain.FeedPost
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(paddingValues: PaddingValues ,viewModel: MainViewModel) {
+fun HomeScreen(paddingValues: PaddingValues, viewModel: MainViewModel) {
 
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+    val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
 
+    when (val currentState = screenState.value) {
+        is HomeScreenState.Posts -> {
+            FeedPosts(
+                posts = currentState.posts,
+                paddingValues = paddingValues,
+                viewModel = viewModel
+            )
+        }
+        is HomeScreenState.Comments -> {
+            CommentsScreen(
+                feedPost = currentState.feedPost,
+                comment = currentState.comments
+            )
+        }
+        HomeScreenState.Initial -> {}
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun FeedPosts(
+    posts: List<FeedPost>,
+    paddingValues: PaddingValues,
+    viewModel: MainViewModel
+) {
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
@@ -34,7 +60,7 @@ fun HomeScreen(paddingValues: PaddingValues ,viewModel: MainViewModel) {
     ) {
 
         items(
-            items = feedPosts.value,
+            items = posts,
             key = { it.id }
         ) { feedPost ->
 
