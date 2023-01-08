@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -11,6 +12,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bibliographer.vkclient.MainViewModel
 import com.bibliographer.vkclient.navigation.AppNavGraph
+import com.bibliographer.vkclient.navigation.Screen
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
@@ -30,7 +32,15 @@ fun MainScreen(viewModel: MainViewModel) {
                 items.forEach { item ->
                     BottomNavigationItem(
                         selected = currentRoute == item.screen.route,
-                        onClick = { navHostController.navigate(item.screen.route) },
+                        onClick = {
+                            navHostController.navigate(item.screen.route) {
+                                popUpTo(Screen.NewsFeet.route) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                                  },
                         icon = {
                             Icon(item.icon, contentDescription = null)
                         },
@@ -60,7 +70,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
 @Composable
 fun TextCounter(name: String) {
-    var count by remember {
+    var count by rememberSaveable {
         mutableStateOf(0)
     }
 
