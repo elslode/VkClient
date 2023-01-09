@@ -20,7 +20,8 @@ import com.bibliographer.vkclient.domain.PostComment
 @Composable
 fun CommentsScreen(
     feedPost: FeedPost,
-    comment: List<PostComment>
+    comment: List<PostComment>,
+    onBackClickListener: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -29,7 +30,9 @@ fun CommentsScreen(
                     Text(text = "Comments for post id: ${feedPost.id}")
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        onBackClickListener()
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null
