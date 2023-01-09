@@ -9,13 +9,12 @@ import com.bibliographer.vkclient.ui.theme.VkClientTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             VkClientTheme() {
-                MainScreen(viewModel)
+                MainScreen()
             }
         }
     }

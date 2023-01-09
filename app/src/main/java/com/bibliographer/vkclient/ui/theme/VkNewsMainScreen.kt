@@ -8,16 +8,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.bibliographer.vkclient.MainViewModel
+import com.bibliographer.vkclient.NewsFeedViewModel
+import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.navigation.AppNavGraph
 import com.bibliographer.vkclient.navigation.NavigationState
 import com.bibliographer.vkclient.navigation.rememberNavigationState
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun  MainScreen() {
 
     val navigationState = rememberNavigationState()
+    val commentsToPost: MutableState<FeedPost?> = remember {
+        mutableStateOf(null)
+    }
 
     Scaffold(
         bottomBar = {
@@ -53,10 +56,19 @@ fun MainScreen(viewModel: MainViewModel) {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             homeScreenContent = {
-                HomeScreen(
-                    paddingValues = paddingValues,
-                    viewModel = viewModel
-                )
+                if (commentsToPost.value == null) {
+                    HomeScreen(
+                        paddingValues = paddingValues,
+                        onCommentClickListener = {
+                            commentsToPost.value = it
+                        }
+                    )
+                } else {
+                    CommentsScreen {
+                        commentsToPost.value = null
+                    }
+                }
+
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = { TextCounter(name = "Profile") })
