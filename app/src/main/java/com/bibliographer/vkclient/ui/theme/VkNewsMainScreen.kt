@@ -12,10 +12,11 @@ import com.bibliographer.vkclient.NewsFeedViewModel
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.navigation.AppNavGraph
 import com.bibliographer.vkclient.navigation.NavigationState
+import com.bibliographer.vkclient.navigation.Screen
 import com.bibliographer.vkclient.navigation.rememberNavigationState
 
 @Composable
-fun  MainScreen() {
+fun MainScreen() {
 
     val navigationState = rememberNavigationState()
     val commentsToPost: MutableState<FeedPost?> = remember {
@@ -55,22 +56,22 @@ fun  MainScreen() {
 
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            homeScreenContent = {
-                if (commentsToPost.value == null) {
-                    HomeScreen(
-                        paddingValues = paddingValues,
-                        onCommentClickListener = {
-                            commentsToPost.value = it
-                        }
-                    )
-                } else {
-                    CommentsScreen(
-                        onBackClickListener = {
-                            commentsToPost.value = null
-                        },
-                        feedPost = commentsToPost.value!!
-                    )
-                }
+            newsFeedScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentClickListener = {
+                        commentsToPost.value = it
+                        navigationState.navigateTo(Screen.Comments.route)
+                    }
+                )
+            },
+            commentsScreenContent = {
+                CommentsScreen(
+                    onBackClickListener = {
+                        commentsToPost.value = null
+                    },
+                    feedPost = commentsToPost.value!!
+                )
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = { TextCounter(name = "Profile") })
