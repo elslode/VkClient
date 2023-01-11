@@ -7,13 +7,15 @@ import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.PostComment
 import com.bibliographer.vkclient.ui.theme.CommentsScreenState
 
-class CommentsViewModel : ViewModel() {
+class CommentsViewModel(
+    feedPost: FeedPost
+): ViewModel() {
 
     private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState> = _screenState
 
     init {
-        loadComments(FeedPost())
+        loadComments(feedPost)
     }
 
     fun loadComments(feedPost: FeedPost) {

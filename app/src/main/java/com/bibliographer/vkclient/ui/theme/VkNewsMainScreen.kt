@@ -64,11 +64,13 @@ fun  MainScreen() {
                         }
                     )
                 } else {
-                    CommentsScreen {
-                        commentsToPost.value = null
-                    }
+                    CommentsScreen(
+                        onBackClickListener = {
+                            commentsToPost.value = null
+                        },
+                        feedPost = commentsToPost.value!!
+                    )
                 }
-
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = { TextCounter(name = "Profile") })
