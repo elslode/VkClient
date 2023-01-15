@@ -1,6 +1,8 @@
 package com.bibliographer.vkclient.navigation
 
+import android.net.Uri
 import com.bibliographer.vkclient.domain.FeedPost
+import com.google.gson.Gson
 
 sealed class Screen(
     val route: String
@@ -13,19 +15,24 @@ sealed class Screen(
 
         private const val ROUTE_FOR_ARGS = "comments"
         fun getRouteWithArgs(feedPost: FeedPost): String {
-            return "$ROUTE_FOR_ARGS/${feedPost.id}/${feedPost.contentText}"
+            val feedPostJson = Gson().toJson(feedPost)
+            return "$ROUTE_FOR_ARGS/${feedPostJson.encode()}"
         }
     }
 
     companion object {
 
-        const val KEY_FEED_POST_ID = "feed_post_id"
-        const val KEY_FEED_POST_CONTENT = "feed_post_content"
+        const val KEY_FEED_POST = "feed_post"
 
         private const val ROUTE_HOME = "home"
-        private const val ROUTE_COMMENTS = "comments/{$KEY_FEED_POST_ID}/{$KEY_FEED_POST_CONTENT}"
+        private const val ROUTE_COMMENTS = "comments/{$KEY_FEED_POST}"
         private const val ROUTE_NEWS_FEED = "news_feed"
         private const val ROUTE_FAVOURITE = "favourite"
         private const val ROUTE_PROFILE = "profile"
     }
 }
+
+fun String.encode(): String {
+    return Uri.encode(this)
+}
+
