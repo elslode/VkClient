@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.navigation.NavType
 import com.bibliographer.vkclient.R
-import com.bibliographer.vkclient.navigation.Screen
 import com.google.gson.Gson
 import kotlinx.parcelize.Parcelize
 

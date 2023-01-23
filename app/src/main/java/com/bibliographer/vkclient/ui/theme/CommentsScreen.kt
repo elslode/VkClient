@@ -1,6 +1,5 @@
 package com.bibliographer.vkclient.ui.theme
 
-import android.content.ClipData.Item
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

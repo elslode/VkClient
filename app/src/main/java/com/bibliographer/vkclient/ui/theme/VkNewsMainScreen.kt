@@ -9,11 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.bibliographer.vkclient.NewsFeedViewModel
-import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.navigation.AppNavGraph
 import com.bibliographer.vkclient.navigation.NavigationState
-import com.bibliographer.vkclient.navigation.Screen
 import com.bibliographer.vkclient.navigation.rememberNavigationState
 
 @Composable
