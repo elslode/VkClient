@@ -1,6 +1,7 @@
 package com.bibliographer.vkclient.presentation.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -17,15 +18,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             VkClientTheme {
                 val launcher = rememberLauncherForActivityResult(
-                    contract = VK.getVKAuthActivityResultContract(),
-
+                    contract = VK.getVKAuthActivityResultContract()
                 ) {
                     when (it) {
                         is VKAuthenticationResult.Success -> {
-                            // User passed authorization
+                            Log.d("MainActivity", "Success auth")
                         }
                         is VKAuthenticationResult.Failed -> {
-                            // User didn't pass authorization
+                            Log.d("MainActivity", "Failed auth")
                         }
                     }
                 }
