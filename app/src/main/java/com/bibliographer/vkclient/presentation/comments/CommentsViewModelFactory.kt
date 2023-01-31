@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient
+package com.bibliographer.vkclient.presentation.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.ui.theme
+package com.bibliographer.vkclient.presentation.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.*
@@ -12,6 +12,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bibliographer.vkclient.navigation.AppNavGraph
 import com.bibliographer.vkclient.navigation.NavigationState
 import com.bibliographer.vkclient.navigation.rememberNavigationState
+import com.bibliographer.vkclient.presentation.comments.CommentsScreen
+import com.bibliographer.vkclient.ui.theme.NewsFeedScreen
 
 @Composable
 fun MainScreen() {
@@ -58,7 +60,7 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(
+                NewsFeedScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)

@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.ui.theme
+package com.bibliographer.vkclient.presentation.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -15,10 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bibliographer.vkclient.CommentsViewModel
-import com.bibliographer.vkclient.CommentsViewModelFactory
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.PostComment
+import com.bibliographer.vkclient.ui.theme.VkClientTheme
 
 @Composable
 fun CommentsScreen(

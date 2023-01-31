@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.ui.theme
+package com.bibliographer.vkclient.presentation.news
 
 import com.bibliographer.vkclient.domain.FeedPost
 

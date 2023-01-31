@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.ui.theme
+package com.bibliographer.vkclient.presentation.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite

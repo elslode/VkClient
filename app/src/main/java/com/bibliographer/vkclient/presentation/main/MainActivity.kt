@@ -1,11 +1,9 @@
-package com.bibliographer.vkclient
+package com.bibliographer.vkclient.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import com.bibliographer.vkclient.ui.theme.ActivityResultTest
-import com.bibliographer.vkclient.ui.theme.MainScreen
 import com.bibliographer.vkclient.ui.theme.VkClientTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult

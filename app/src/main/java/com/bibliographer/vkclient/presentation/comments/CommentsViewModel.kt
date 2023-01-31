@@ -1,11 +1,10 @@
-package com.bibliographer.vkclient
+package com.bibliographer.vkclient.presentation.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.PostComment
-import com.bibliographer.vkclient.ui.theme.CommentsScreenState
 
 class CommentsViewModel(
     feedPost: FeedPost
