@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.bibliographer.vkclient.R
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.StatisticItem
@@ -58,13 +59,11 @@ private fun HeaderPost(feedPostCard: FeedPost) {
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
+        AsyncImage(
+            model = feedPostCard.communityImageUrl,
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape),
-            painter = painterResource(
-                id = feedPostCard.avatarResId
-            ),
             contentDescription = null
         )
         Spacer(modifier = Modifier.padding(8.dp))
@@ -100,11 +99,11 @@ private fun ContentPost(feedPostCard: FeedPost) {
             text = feedPostCard.contentText
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Image(
+        AsyncImage(
+            model = feedPostCard.communityImageUrl,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            painter = painterResource(feedPostCard.contentImageResId),
+                .wrapContentHeight(),
             contentDescription = null,
             contentScale = ContentScale.FillWidth
         )

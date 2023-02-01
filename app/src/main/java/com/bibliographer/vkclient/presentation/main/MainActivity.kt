@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bibliographer.vkclient.ui.theme.VkClientTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
@@ -17,20 +19,25 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             VkClientTheme {
+                val viewModel: MainViewModel = viewModel()
+                val authState = viewModel.authState.observeAsState(AuthState.Initial)
+
                 val launcher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract()
                 ) {
-                    when (it) {
-                        is VKAuthenticationResult.Success -> {
-                            Log.d("MainActivity", "Success auth")
-                        }
-                        is VKAuthenticationResult.Failed -> {
-                            Log.d("MainActivity", "Failed auth")
+                    viewModel.performAuthResult(it)
+                }
+
+                when (authState.value) {
+                    is AuthState.Authorized -> {
+                        MainScreen()
+                    }
+                    is AuthState.NotAuthorized -> {
+                        LoginScreen {
+                            launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
                         }
                     }
                 }
-                launcher.launch(listOf(VKScope.WALL))
-                MainScreen()
             }
         }
     }
