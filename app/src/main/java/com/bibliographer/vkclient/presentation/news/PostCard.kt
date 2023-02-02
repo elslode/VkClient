@@ -1,6 +1,5 @@
-package com.bibliographer.vkclient.ui.theme
+package com.bibliographer.vkclient.presentation.news
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -22,6 +22,7 @@ import com.bibliographer.vkclient.R
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.StatisticItem
 import com.bibliographer.vkclient.domain.StatisticsType
+import com.bibliographer.vkclient.ui.theme.DarkRed
 
 @Composable
 fun PostCard(
@@ -46,7 +47,8 @@ fun PostCard(
                 onCommentClickListener = onCommentClickListener,
                 onLikeClickListener = onLikeClickListener,
                 onShareClickListener = onShareClickListener,
-                onViewClickListener = onViewClickListener
+                onViewClickListener = onViewClickListener,
+                isFavourite = feedPost.isFavourite
             )
         }
     }
@@ -116,7 +118,8 @@ private fun Statistics(
     onLikeClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     onShareClickListener: (StatisticItem) -> Unit,
-    onViewClickListener: (StatisticItem) -> Unit
+    onViewClickListener: (StatisticItem) -> Unit,
+    isFavourite: Boolean
 ) {
     Row(
         modifier = Modifier.padding(8.dp)
@@ -129,7 +132,7 @@ private fun Statistics(
                 .getItemByType(StatisticsType.VIEWS)
             ItemReactionUsers(
                 image = R.drawable.ic_views_count,
-                text = viewsItem.count.toString(),
+                text = formatStatisticItem(viewsItem.count),
                 onIconReactionClickListener = {
                     onViewClickListener(viewsItem)
                 }
@@ -143,7 +146,7 @@ private fun Statistics(
             val shareItem = statistics.getItemByType(StatisticsType.SHARES)
             ItemReactionUsers(
                 image = R.drawable.ic_share,
-                text = shareItem.count.toString(),
+                text = formatStatisticItem(shareItem.count),
                 onIconReactionClickListener = {
                     onShareClickListener(shareItem)
                 }
@@ -152,7 +155,7 @@ private fun Statistics(
             val commentItem = statistics.getItemByType(StatisticsType.COMMENTS)
             ItemReactionUsers(
                 image = R.drawable.ic_comment,
-                text = commentItem.count.toString(),
+                text = formatStatisticItem(commentItem.count),
                 onIconReactionClickListener = {
                     onCommentClickListener(commentItem)
                 }
@@ -160,13 +163,24 @@ private fun Statistics(
 
             val likeItem = statistics.getItemByType(StatisticsType.LIKES)
             ItemReactionUsers(
-                image = R.drawable.ic_like,
-                text = likeItem.count.toString(),
+                image = if (isFavourite) R.drawable.ic_like_set else R.drawable.ic_like,
+                text = formatStatisticItem(likeItem.count),
                 onIconReactionClickListener = {
                     onLikeClickListener(likeItem)
-                }
+                },
+                tint = if (isFavourite) DarkRed else MaterialTheme.colors.onSecondary
             )
         }
+    }
+}
+
+private fun formatStatisticItem(count: Int): String {
+    return if (count > 100_000) {
+        String.format("%sK", (count/1000))
+    } else if (count > 1000) {
+        String.format("%.1fK", (count/1000f))
+    } else {
+        count.toString()
     }
 }
 
@@ -178,16 +192,18 @@ private fun List<StatisticItem>.getItemByType(type: StatisticsType): StatisticIt
 private fun ItemReactionUsers(
     image: Int,
     text: String,
-    onIconReactionClickListener: () -> Unit
+    onIconReactionClickListener: () -> Unit,
+    tint: Color = MaterialTheme.colors.onSecondary
 ) {
     Row(
         modifier = Modifier.clickable { onIconReactionClickListener() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
+            modifier = Modifier.size(20.dp),
             painter = painterResource(image),
             contentDescription = null,
-            tint = MaterialTheme.colors.onSecondary
+            tint = tint
         )
         Spacer(modifier = Modifier.padding(2.dp))
         Text(

@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bibliographer.vkclient.presentation.news.NewsFeedViewModel
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.presentation.news.NewsFeedScreenState
+import com.bibliographer.vkclient.presentation.news.PostCard
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable

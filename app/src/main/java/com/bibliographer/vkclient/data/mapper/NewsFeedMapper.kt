@@ -4,6 +4,8 @@ import com.bibliographer.vkclient.data.model.NewsFeedResponseDto
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.StatisticItem
 import com.bibliographer.vkclient.domain.StatisticsType
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.absoluteValue
 
 class NewsFeedMapper {
@@ -19,7 +21,7 @@ class NewsFeedMapper {
             val feedPost = FeedPost(
                 id = post.id,
                 communityName = group.name,
-                publicationDate = post.date.toString(),
+                publicationDate = (post.date * 1000).mapTimestampToDate(),
                 communityImageUrl = group.imageUrl,
                 contentText = post.text,
                 contentImageUrl = post.attachments?.first()?.photo?.photoUrls?.lastOrNull()?.url,
@@ -28,10 +30,16 @@ class NewsFeedMapper {
                     StatisticItem(type = StatisticsType.COMMENTS, count = post.comments.count),
                     StatisticItem(type = StatisticsType.SHARES, count = post.reposts.count),
                     StatisticItem(type = StatisticsType.VIEWS, count = post.views.count),
-                )
+                ),
+                isFavourite = post.isFavourite
             )
             result.add(feedPost)
         }
         return result
+    }
+
+    private fun Long.mapTimestampToDate(): String {
+        val data = Date(this)
+        return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(data)
     }
 }
