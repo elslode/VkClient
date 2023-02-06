@@ -28,7 +28,7 @@ import com.bibliographer.vkclient.ui.theme.DarkRed
 fun PostCard(
     modifier: Modifier = Modifier,
     feedPost: FeedPost,
-    onLikeClickListener: (StatisticItem) -> Unit,
+    onLikeClickListener: () -> Unit,
     onShareClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     onViewClickListener: (StatisticItem) -> Unit
@@ -48,7 +48,7 @@ fun PostCard(
                 onLikeClickListener = onLikeClickListener,
                 onShareClickListener = onShareClickListener,
                 onViewClickListener = onViewClickListener,
-                isFavourite = feedPost.isFavourite
+                isFavourite = feedPost.isLiked
             )
         }
     }
@@ -115,7 +115,7 @@ private fun ContentPost(feedPostCard: FeedPost) {
 @Composable
 private fun Statistics(
     statistics: List<StatisticItem>,
-    onLikeClickListener: (StatisticItem) -> Unit,
+    onLikeClickListener: () -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     onShareClickListener: (StatisticItem) -> Unit,
     onViewClickListener: (StatisticItem) -> Unit,
@@ -166,7 +166,7 @@ private fun Statistics(
                 image = if (isFavourite) R.drawable.ic_like_set else R.drawable.ic_like,
                 text = formatStatisticItem(likeItem.count),
                 onIconReactionClickListener = {
-                    onLikeClickListener(likeItem)
+                    onLikeClickListener()
                 },
                 tint = if (isFavourite) DarkRed else MaterialTheme.colors.onSecondary
             )

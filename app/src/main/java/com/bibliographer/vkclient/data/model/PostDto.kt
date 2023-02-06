@@ -3,8 +3,7 @@ package com.bibliographer.vkclient.data.model
 import com.google.gson.annotations.SerializedName
 
 data class PostDto(
-    @SerializedName("id") val id: String,
-    @SerializedName("is_favourite") val isFavourite: Boolean,
+    @SerializedName("id") val id: Long,
     @SerializedName("text") val text: String,
     @SerializedName("date") val date: Long,
     @SerializedName("likes") val likes: LikesDto,
