@@ -5,5 +5,8 @@ import com.bibliographer.vkclient.domain.FeedPost
 sealed class NewsFeedScreenState {
 
     object Initial: NewsFeedScreenState()
-    data class Posts(val posts: List<FeedPost>) : NewsFeedScreenState()
+    data class Posts(
+        val posts: List<FeedPost>,
+        val nextDataIsLoading: Boolean = false
+    ) : NewsFeedScreenState()
 }

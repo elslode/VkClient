@@ -14,18 +14,34 @@ class NewsFeedRepository(application: Application) {
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token = VKAccessToken.restore(storage)
 
+    private val apiService = ApiFactory.apiService
+    private val mapper = NewsFeedMapper()
+
     private val _feedPosts = mutableListOf<FeedPost>()
     val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
 
-    private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
+    private var nextFrom: String? = null
 
     suspend fun loadRecommendations(): List<FeedPost> {
-        val response = apiService.loadRecommendations(token = getAccessToken())
+        val startFrom = nextFrom
+        if (startFrom == null && feedPosts.isNotEmpty()) return feedPosts
+
+        val response = if (startFrom == null) {
+            apiService.loadRecommendations(
+                token = getAccessToken()
+            )
+        } else {
+            apiService.loadRecommendations(
+                token = getAccessToken(),
+                startFrom = startFrom
+            )
+        }
+
+        nextFrom = response.newsFeedContent.nextFrom
         val posts = mapper.mapResponseToPosts(response)
         _feedPosts.addAll(posts)
-        return posts
+        return feedPosts
     }
 
     private fun getAccessToken(): String {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.bibliographer.vkclient.data.repository.NewsFeedRepository
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.StatisticItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
@@ -28,6 +29,14 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
             val feedPosts = repository.loadRecommendations()
             _screenState.value = NewsFeedScreenState.Posts(feedPosts)
         }
+    }
+
+    fun loadNextRecommendations() {
+        _screenState.value = NewsFeedScreenState.Posts(
+            posts = repository.feedPosts,
+            nextDataIsLoading = true
+        )
+       loadRecommendations()
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
