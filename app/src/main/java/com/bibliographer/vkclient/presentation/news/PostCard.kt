@@ -29,9 +29,7 @@ fun PostCard(
     modifier: Modifier = Modifier,
     feedPost: FeedPost,
     onLikeClickListener: () -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
-    onViewClickListener: (StatisticItem) -> Unit
 ) {
     Card(
         modifier = modifier
@@ -46,8 +44,6 @@ fun PostCard(
                 statistics = feedPost.statistics,
                 onCommentClickListener = onCommentClickListener,
                 onLikeClickListener = onLikeClickListener,
-                onShareClickListener = onShareClickListener,
-                onViewClickListener = onViewClickListener,
                 isFavourite = feedPost.isLiked
             )
         }
@@ -117,8 +113,6 @@ private fun Statistics(
     statistics: List<StatisticItem>,
     onLikeClickListener: () -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewClickListener: (StatisticItem) -> Unit,
     isFavourite: Boolean
 ) {
     Row(
@@ -132,10 +126,7 @@ private fun Statistics(
                 .getItemByType(StatisticsType.VIEWS)
             ItemReactionUsers(
                 image = R.drawable.ic_views_count,
-                text = formatStatisticItem(viewsItem.count),
-                onIconReactionClickListener = {
-                    onViewClickListener(viewsItem)
-                }
+                text = formatStatisticItem(viewsItem.count)
             )
         }
         Row(
@@ -146,10 +137,7 @@ private fun Statistics(
             val shareItem = statistics.getItemByType(StatisticsType.SHARES)
             ItemReactionUsers(
                 image = R.drawable.ic_share,
-                text = formatStatisticItem(shareItem.count),
-                onIconReactionClickListener = {
-                    onShareClickListener(shareItem)
-                }
+                text = formatStatisticItem(shareItem.count)
             )
 
             val commentItem = statistics.getItemByType(StatisticsType.COMMENTS)
@@ -192,11 +180,18 @@ private fun List<StatisticItem>.getItemByType(type: StatisticsType): StatisticIt
 private fun ItemReactionUsers(
     image: Int,
     text: String,
-    onIconReactionClickListener: () -> Unit,
+    onIconReactionClickListener: (() -> Unit)? = null,
     tint: Color = MaterialTheme.colors.onSecondary
 ) {
+
+    val modifier = if (onIconReactionClickListener == null) {
+        Modifier
+    } else {
+        Modifier.clickable { onIconReactionClickListener() }
+    }
+
     Row(
-        modifier = Modifier.clickable { onIconReactionClickListener() },
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

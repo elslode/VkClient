@@ -10,12 +10,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bibliographer.vkclient.presentation.news.NewsFeedViewModel
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.presentation.news.NewsFeedScreenState
+import com.bibliographer.vkclient.presentation.news.NewsFeedViewModel
 import com.bibliographer.vkclient.presentation.news.PostCard
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -39,6 +38,14 @@ fun NewsFeedScreen(
             )
         }
         NewsFeedScreenState.Initial -> {}
+        NewsFeedScreenState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = DarkBlue)
+            }
+        }
     }
 }
 
@@ -79,12 +86,6 @@ private fun FeedPosts(
             ) {
                 PostCard(
                     feedPost = feedPost,
-                    onViewClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
-                    onShareClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
                     onLikeClickListener = {
                         viewModel.changeLikeStatus(feedPost)
                     },
