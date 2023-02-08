@@ -4,8 +4,9 @@ import android.app.Application
 import com.bibliographer.vkclient.data.mapper.NewsFeedMapper
 import com.bibliographer.vkclient.data.network.ApiFactory
 import com.bibliographer.vkclient.domain.FeedPost
+import com.bibliographer.vkclient.domain.PostComment
 import com.bibliographer.vkclient.domain.StatisticItem
-import com.bibliographer.vkclient.domain.StatisticsType
+import com.bibliographer.vkclient.domain.StatisticType
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 
@@ -57,6 +58,14 @@ class NewsFeedRepository(application: Application) {
         _feedPosts.remove(feedPost)
     }
 
+    suspend fun getComments(feedPost: FeedPost): List<PostComment> {
+        val comments = apiService.getComments(
+            token = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
+        )
+        return mapper.mapResponseToComments(comments)
+    }
     suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
@@ -74,8 +83,8 @@ class NewsFeedRepository(application: Application) {
 
         val newLikesCount = response.likes.count
         val newStatistics = feedPost.statistics.toMutableList().apply {
-            removeIf { it.type == StatisticsType.LIKES }
-            add(StatisticItem(StatisticsType.LIKES, newLikesCount))
+            removeIf { it.type == StatisticType.LIKES }
+            add(StatisticItem(StatisticType.LIKES, newLikesCount))
         }
         val newPost = feedPost.copy(
             statistics = newStatistics,

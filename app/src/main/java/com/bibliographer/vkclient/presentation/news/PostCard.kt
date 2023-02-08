@@ -21,7 +21,7 @@ import coil.compose.AsyncImage
 import com.bibliographer.vkclient.R
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.StatisticItem
-import com.bibliographer.vkclient.domain.StatisticsType
+import com.bibliographer.vkclient.domain.StatisticType
 import com.bibliographer.vkclient.ui.theme.DarkRed
 
 @Composable
@@ -123,7 +123,7 @@ private fun Statistics(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val viewsItem = statistics
-                .getItemByType(StatisticsType.VIEWS)
+                .getItemByType(StatisticType.VIEWS)
             ItemReactionUsers(
                 image = R.drawable.ic_views_count,
                 text = formatStatisticItem(viewsItem.count)
@@ -134,13 +134,13 @@ private fun Statistics(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val shareItem = statistics.getItemByType(StatisticsType.SHARES)
+            val shareItem = statistics.getItemByType(StatisticType.SHARES)
             ItemReactionUsers(
                 image = R.drawable.ic_share,
                 text = formatStatisticItem(shareItem.count)
             )
 
-            val commentItem = statistics.getItemByType(StatisticsType.COMMENTS)
+            val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
             ItemReactionUsers(
                 image = R.drawable.ic_comment,
                 text = formatStatisticItem(commentItem.count),
@@ -149,7 +149,7 @@ private fun Statistics(
                 }
             )
 
-            val likeItem = statistics.getItemByType(StatisticsType.LIKES)
+            val likeItem = statistics.getItemByType(StatisticType.LIKES)
             ItemReactionUsers(
                 image = if (isFavourite) R.drawable.ic_like_set else R.drawable.ic_like,
                 text = formatStatisticItem(likeItem.count),
@@ -172,7 +172,7 @@ private fun formatStatisticItem(count: Int): String {
     }
 }
 
-private fun List<StatisticItem>.getItemByType(type: StatisticsType): StatisticItem {
+private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
     return this.find { it.type == type } ?: throw java.lang.IllegalStateException()
 }
 

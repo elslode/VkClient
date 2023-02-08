@@ -1,14 +1,18 @@
 package com.bibliographer.vkclient.presentation.comments
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
+import com.bibliographer.vkclient.data.repository.NewsFeedRepository
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.PostComment
+import kotlinx.coroutines.launch
 
 class CommentsViewModel(
+    application: Application,
     feedPost: FeedPost
 ): ViewModel() {
+
+    private val repository = NewsFeedRepository(application)
 
     private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState> = _screenState
@@ -17,15 +21,13 @@ class CommentsViewModel(
         loadComments(feedPost)
     }
 
-    fun loadComments(feedPost: FeedPost) {
-        val comments = mutableListOf<PostComment>().apply {
-            repeat(10) {
-                add(PostComment(id = it))
-            }
+    private fun loadComments(feedPost: FeedPost) {
+        viewModelScope.launch {
+            val comments = repository.getComments(feedPost)
+            _screenState.value = CommentsScreenState.Comments(
+                comments = comments,
+                feedPost = feedPost
+            )
         }
-        _screenState.value = CommentsScreenState.Comments(
-            comments = comments,
-            feedPost = feedPost
-        )
     }
 }
