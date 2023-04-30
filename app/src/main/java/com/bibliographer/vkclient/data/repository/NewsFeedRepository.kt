@@ -12,11 +12,13 @@ import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
 class NewsFeedRepository(application: Application) {
@@ -52,6 +54,9 @@ class NewsFeedRepository(application: Application) {
             _feedPosts.addAll(posts)
             emit(feedPosts)
         }
+    }.retry(2) {
+        delay(RETRY_TIMEOUT_MILLIS)
+        true
     }
 
     private val apiService = ApiFactory.apiService
@@ -65,12 +70,12 @@ class NewsFeedRepository(application: Application) {
 
     val recommendations: StateFlow<List<FeedPost>> =
         loadedListFlow
-        .mergeWith(refresherListFlow)
-        .stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Lazily,
-        initialValue = feedPosts
-    )
+            .mergeWith(refresherListFlow)
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.Lazily,
+                initialValue = feedPosts
+            )
 
     suspend fun loadNextData() {
         nextDataNeededEvent.emit(Unit)
@@ -90,14 +95,19 @@ class NewsFeedRepository(application: Application) {
         refresherListFlow.emit(feedPosts)
     }
 
-    suspend fun getComments(feedPost: FeedPost): List<PostComment> {
+    fun getComments(feedPost: FeedPost): Flow<List<PostComment>> = flow {
         val comments = apiService.getComments(
             token = getAccessToken(),
             ownerId = feedPost.communityId,
             postId = feedPost.id
         )
-        return mapper.mapResponseToComments(comments)
+        val commentsDomain = mapper.mapResponseToComments(comments)
+        emit(commentsDomain)
+    }.retry(2) {
+        delay(RETRY_TIMEOUT_MILLIS)
+        true
     }
+
     suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
@@ -125,5 +135,9 @@ class NewsFeedRepository(application: Application) {
         val postIndex = _feedPosts.indexOf(feedPost)
         _feedPosts[postIndex] = newPost
         refresherListFlow.emit(feedPosts)
+    }
+
+    companion object {
+        private const val RETRY_TIMEOUT_MILLIS = 3000L
     }
 }
