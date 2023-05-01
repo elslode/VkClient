@@ -19,9 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bibliographer.vkclient.R
-import com.bibliographer.vkclient.domain.FeedPost
-import com.bibliographer.vkclient.domain.StatisticItem
-import com.bibliographer.vkclient.domain.StatisticType
+import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.domain.entity.StatisticItem
+import com.bibliographer.vkclient.domain.entity.StatisticType
 import com.bibliographer.vkclient.ui.theme.DarkRed
 
 @Composable

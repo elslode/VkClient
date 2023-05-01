@@ -1,7 +1,7 @@
 package com.bibliographer.vkclient.presentation.comments
 
-import com.bibliographer.vkclient.domain.FeedPost
-import com.bibliographer.vkclient.domain.PostComment
+import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.domain.entity.PostComment
 
 sealed class CommentsScreenState {
 

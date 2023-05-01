@@ -3,11 +3,12 @@ package com.bibliographer.vkclient.data.repository
 import android.app.Application
 import com.bibliographer.vkclient.data.mapper.NewsFeedMapper
 import com.bibliographer.vkclient.data.network.ApiFactory
-import com.bibliographer.vkclient.domain.AuthState
-import com.bibliographer.vkclient.domain.FeedPost
-import com.bibliographer.vkclient.domain.PostComment
-import com.bibliographer.vkclient.domain.StatisticItem
-import com.bibliographer.vkclient.domain.StatisticType
+import com.bibliographer.vkclient.domain.entity.AuthState
+import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.domain.entity.PostComment
+import com.bibliographer.vkclient.domain.entity.StatisticItem
+import com.bibliographer.vkclient.domain.entity.StatisticType
+import com.bibliographer.vkclient.domain.repository.NewsFeedRepository
 import com.bibliographer.vkclient.extensions.mergeWith
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
-class NewsFeedRepository(application: Application) {
+class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
 
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token
@@ -72,12 +73,12 @@ class NewsFeedRepository(application: Application) {
 
     private val checkAuthStateEvent = MutableSharedFlow<Unit>(replay = 1)
 
-    val authStateFlow = flow {
+    private val authStateFlow = flow {
         checkAuthStateEvent.emit(Unit)
         checkAuthStateEvent.collect {
             val currentToken = token
             val loggedIn = currentToken != null && currentToken.isValid
-            val authState =   if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
+            val authState = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
             emit(authState)
         }
     }.stateIn(
@@ -86,7 +87,7 @@ class NewsFeedRepository(application: Application) {
         initialValue = AuthState.Initial
     )
 
-    val recommendations: StateFlow<List<FeedPost>> =
+    private val recommendations: StateFlow<List<FeedPost>> =
         loadedListFlow
             .mergeWith(refresherListFlow)
             .stateIn(
@@ -95,11 +96,19 @@ class NewsFeedRepository(application: Application) {
                 initialValue = feedPosts
             )
 
-    suspend fun loadNextData() {
+    override fun getAuthStateFlow(): StateFlow<AuthState> {
+        return authStateFlow
+    }
+
+    override fun getRecommendations(): StateFlow<List<FeedPost>> {
+        return recommendations
+    }
+
+    override suspend fun loadNextData() {
         nextDataNeededEvent.emit(Unit)
     }
 
-    suspend fun checkAuthStateEvent() {
+    override suspend fun checkAuthStateEvent() {
         checkAuthStateEvent.emit(Unit)
     }
 
@@ -107,7 +116,7 @@ class NewsFeedRepository(application: Application) {
         return token?.accessToken ?: throw java.lang.IllegalStateException("Token is null")
     }
 
-    suspend fun deletePost(feedPost: FeedPost) {
+    override suspend fun deletePost(feedPost: FeedPost) {
         apiService.ignorePost(
             token = getAccessToken(),
             ownerId = feedPost.communityId,
@@ -117,7 +126,7 @@ class NewsFeedRepository(application: Application) {
         refresherListFlow.emit(feedPosts)
     }
 
-    fun getComments(feedPost: FeedPost): Flow<List<PostComment>> = flow {
+    override fun getComments(feedPost: FeedPost): StateFlow<List<PostComment>> = flow {
         val comments = apiService.getComments(
             token = getAccessToken(),
             ownerId = feedPost.communityId,
@@ -128,9 +137,13 @@ class NewsFeedRepository(application: Application) {
     }.retry(2) {
         delay(RETRY_TIMEOUT_MILLIS)
         true
-    }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
+    )
 
-    suspend fun changeLikeStatus(feedPost: FeedPost) {
+    override suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
                 token = getAccessToken(),

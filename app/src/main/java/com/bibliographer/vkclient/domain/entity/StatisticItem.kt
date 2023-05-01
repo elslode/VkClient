@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.domain
+package com.bibliographer.vkclient.domain.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

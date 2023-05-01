@@ -3,7 +3,7 @@ package com.bibliographer.vkclient.presentation.comments
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.bibliographer.vkclient.domain.FeedPost
+import com.bibliographer.vkclient.domain.entity.FeedPost
 
 class CommentsViewModelFactory(
     private val feedPost: FeedPost,

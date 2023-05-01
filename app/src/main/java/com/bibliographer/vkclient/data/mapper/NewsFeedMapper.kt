@@ -2,10 +2,10 @@ package com.bibliographer.vkclient.data.mapper
 
 import com.bibliographer.vkclient.data.model.CommentsResponseDto
 import com.bibliographer.vkclient.data.model.NewsFeedResponseDto
-import com.bibliographer.vkclient.domain.FeedPost
-import com.bibliographer.vkclient.domain.PostComment
-import com.bibliographer.vkclient.domain.StatisticItem
-import com.bibliographer.vkclient.domain.StatisticType
+import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.domain.entity.PostComment
+import com.bibliographer.vkclient.domain.entity.StatisticItem
+import com.bibliographer.vkclient.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue

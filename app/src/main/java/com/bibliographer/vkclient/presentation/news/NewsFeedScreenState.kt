@@ -1,6 +1,6 @@
 package com.bibliographer.vkclient.presentation.news
 
-import com.bibliographer.vkclient.domain.FeedPost
+import com.bibliographer.vkclient.domain.entity.FeedPost
 
 sealed class NewsFeedScreenState {
 

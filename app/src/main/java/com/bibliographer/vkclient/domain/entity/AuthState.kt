@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.domain
+package com.bibliographer.vkclient.domain.entity
 
 sealed class AuthState {
     object Authorized: AuthState()

@@ -1,7 +1,7 @@
 package com.bibliographer.vkclient.navigation
 
 import android.net.Uri
-import com.bibliographer.vkclient.domain.FeedPost
+import com.bibliographer.vkclient.domain.entity.FeedPost
 import com.google.gson.Gson
 
 sealed class Screen(

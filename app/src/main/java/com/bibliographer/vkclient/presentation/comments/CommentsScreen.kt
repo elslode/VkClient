@@ -1,7 +1,6 @@
 package com.bibliographer.vkclient.presentation.comments
 
 import android.app.Application
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,21 +10,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.bibliographer.vkclient.R
-import com.bibliographer.vkclient.domain.FeedPost
-import com.bibliographer.vkclient.domain.PostComment
-import com.bibliographer.vkclient.ui.theme.VkClientTheme
+import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.domain.entity.PostComment
 
 @Composable
 fun CommentsScreen(

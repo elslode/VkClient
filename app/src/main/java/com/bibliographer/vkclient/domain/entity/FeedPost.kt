@@ -1,4 +1,4 @@
-package com.bibliographer.vkclient.domain
+package com.bibliographer.vkclient.domain.entity
 
 import android.os.Bundle
 import android.os.Parcelable
