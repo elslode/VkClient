@@ -3,6 +3,7 @@ package com.bibliographer.vkclient.data.repository
 import android.app.Application
 import com.bibliographer.vkclient.data.mapper.NewsFeedMapper
 import com.bibliographer.vkclient.data.network.ApiFactory
+import com.bibliographer.vkclient.domain.AuthState
 import com.bibliographer.vkclient.domain.FeedPost
 import com.bibliographer.vkclient.domain.PostComment
 import com.bibliographer.vkclient.domain.StatisticItem
@@ -24,7 +25,8 @@ import kotlinx.coroutines.flow.stateIn
 class NewsFeedRepository(application: Application) {
 
     private val storage = VKPreferencesKeyValueStorage(application)
-    private val token = VKAccessToken.restore(storage)
+    private val token
+        get() = VKAccessToken.restore(storage)
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private val nextDataNeededEvent = MutableSharedFlow<Unit>(replay = 1)
@@ -68,6 +70,22 @@ class NewsFeedRepository(application: Application) {
 
     private var nextFrom: String? = null
 
+    private val checkAuthStateEvent = MutableSharedFlow<Unit>(replay = 1)
+
+    val authStateFlow = flow {
+        checkAuthStateEvent.emit(Unit)
+        checkAuthStateEvent.collect {
+            val currentToken = token
+            val loggedIn = currentToken != null && currentToken.isValid
+            val authState =   if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
+            emit(authState)
+        }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = AuthState.Initial
+    )
+
     val recommendations: StateFlow<List<FeedPost>> =
         loadedListFlow
             .mergeWith(refresherListFlow)
@@ -79,6 +97,10 @@ class NewsFeedRepository(application: Application) {
 
     suspend fun loadNextData() {
         nextDataNeededEvent.emit(Unit)
+    }
+
+    suspend fun checkAuthStateEvent() {
+        checkAuthStateEvent.emit(Unit)
     }
 
     private fun getAccessToken(): String {
