@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.presentation.ViewModelFactory
 import com.bibliographer.vkclient.presentation.news.NewsFeedScreenState
 import com.bibliographer.vkclient.presentation.news.NewsFeedViewModel
 import com.bibliographer.vkclient.presentation.news.PostCard
@@ -20,11 +21,12 @@ import com.bibliographer.vkclient.presentation.news.PostCard
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun NewsFeedScreen(
+    viewModelFactory: ViewModelFactory,
     paddingValues: PaddingValues,
     onCommentClickListener: (FeedPost) -> Unit
 ) {
 
-    val viewModel: NewsFeedViewModel = viewModel()
+    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
     val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
 
     when (val currentState = screenState.value) {

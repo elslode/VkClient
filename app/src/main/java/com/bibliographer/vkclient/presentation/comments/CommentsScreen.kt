@@ -21,17 +21,16 @@ import coil.compose.AsyncImage
 import com.bibliographer.vkclient.R
 import com.bibliographer.vkclient.domain.entity.FeedPost
 import com.bibliographer.vkclient.domain.entity.PostComment
+import com.bibliographer.vkclient.presentation.ViewModelFactory
 
 @Composable
-fun CommentsScreen(
+fun  CommentsScreen(
+    viewModelFactory: ViewModelFactory,
     onBackClickListener: () -> Unit,
     feedPost: FeedPost
 ) {
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(
-            feedPost,
-            LocalContext.current.applicationContext as Application
-        )
+        factory = viewModelFactory
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
     val currentState = screenState.value

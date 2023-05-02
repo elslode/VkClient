@@ -3,6 +3,7 @@ package com.bibliographer.vkclient.data.repository
 import android.app.Application
 import com.bibliographer.vkclient.data.mapper.NewsFeedMapper
 import com.bibliographer.vkclient.data.network.ApiFactory
+import com.bibliographer.vkclient.data.network.ApiService
 import com.bibliographer.vkclient.domain.entity.AuthState
 import com.bibliographer.vkclient.domain.entity.FeedPost
 import com.bibliographer.vkclient.domain.entity.PostComment
@@ -22,10 +23,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
+class NewsFeedRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    private val mapper: NewsFeedMapper,
+    private val storage: VKPreferencesKeyValueStorage
+) : NewsFeedRepository {
 
-    private val storage = VKPreferencesKeyValueStorage(application)
     private val token
         get() = VKAccessToken.restore(storage)
 
@@ -61,9 +66,6 @@ class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
         delay(RETRY_TIMEOUT_MILLIS)
         true
     }
-
-    private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
 
     private val _feedPosts = mutableListOf<FeedPost>()
     private val feedPosts: List<FeedPost>

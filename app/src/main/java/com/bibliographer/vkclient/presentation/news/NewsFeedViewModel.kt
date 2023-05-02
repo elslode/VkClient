@@ -1,10 +1,8 @@
 package com.bibliographer.vkclient.presentation.news
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bibliographer.vkclient.data.repository.NewsFeedRepositoryImpl
 import com.bibliographer.vkclient.domain.entity.FeedPost
 import com.bibliographer.vkclient.domain.usecase.ChangeLikeStatus
 import com.bibliographer.vkclient.domain.usecase.DeletePost
@@ -17,17 +15,18 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
+class NewsFeedViewModel @Inject constructor(
+    getRecommendationsUseCase: GetRecommendationsUseCase,
+    private val loadNextDataUseCase: LoadNextData,
+    private val changeLikeStatusUseCase: ChangeLikeStatus,
+    private val deletePostUseCase: DeletePost
+) : ViewModel() {
 
     private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.d("NewsFeedViewModel", "exception caught by exception handler")
     }
-    private val repository = NewsFeedRepositoryImpl(application)
-    private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
-    private val loadNextDataUseCase = LoadNextData(repository)
-    private val changeLikeStatusUseCase = ChangeLikeStatus(repository)
-    private val deletePostUseCase = DeletePost(repository)
 
     private val recommendationsFlow = getRecommendationsUseCase()
 

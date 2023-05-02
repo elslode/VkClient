@@ -12,11 +12,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bibliographer.vkclient.navigation.AppNavGraph
 import com.bibliographer.vkclient.navigation.NavigationState
 import com.bibliographer.vkclient.navigation.rememberNavigationState
+import com.bibliographer.vkclient.presentation.ViewModelFactory
 import com.bibliographer.vkclient.presentation.comments.CommentsScreen
 import com.bibliographer.vkclient.ui.theme.NewsFeedScreen
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModelFactory: ViewModelFactory) {
 
     val navigationState = rememberNavigationState()
 
@@ -61,6 +62,7 @@ fun MainScreen() {
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
                 NewsFeedScreen(
+                    viewModelFactory,
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)
@@ -69,6 +71,7 @@ fun MainScreen() {
             },
             commentsScreenContent = { feedPost ->
                 CommentsScreen(
+                    viewModelFactory = viewModelFactory,
                     onBackClickListener = {
                         navigationState.navHostController.popBackStack()
                     },
