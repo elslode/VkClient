@@ -47,8 +47,7 @@ class MainActivity : ComponentActivity() {
                             launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
                         }
                     }
-
-                    AuthState.Initial -> TODO()
+                    else -> {}
                 }
             }
         }
