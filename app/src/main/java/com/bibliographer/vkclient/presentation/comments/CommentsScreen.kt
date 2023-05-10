@@ -22,6 +22,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,19 +36,32 @@ import com.bibliographer.vkclient.NewsFeedApplication
 import com.bibliographer.vkclient.R
 import com.bibliographer.vkclient.domain.entity.FeedPost
 import com.bibliographer.vkclient.domain.entity.PostComment
+import com.bibliographer.vkclient.getApplicationComponent
+import java.util.concurrent.Flow
 
 @Composable
-fun  CommentsScreen(
+fun CommentsScreen(
     onBackClickListener: () -> Unit,
     feedPost: FeedPost
 ) {
-    val component = (LocalContext.current.applicationContext as NewsFeedApplication)
-        .component
+    val component = getApplicationComponent()
         .getCommentsScreenComponentFactory()
         .create(feedPost)
 
     val viewModel: CommentsViewModel = viewModel(factory = component.getViewModelFactory())
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
+
+    CommentsScreenState(
+        screenState = screenState,
+        onBackClickListener = onBackClickListener
+    )
+}
+
+@Composable
+private fun CommentsScreenState(
+    screenState: State<CommentsScreenState>,
+    onBackClickListener: () -> Unit,
+) {
     val currentState = screenState.value
 
     if (currentState is CommentsScreenState.Comments) {

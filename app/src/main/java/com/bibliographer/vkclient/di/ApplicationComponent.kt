@@ -2,6 +2,7 @@ package com.bibliographer.vkclient.di
 
 import android.content.Context
 import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.presentation.ViewModelFactory
 import com.bibliographer.vkclient.presentation.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -15,7 +16,7 @@ import dagger.Component
 )
 interface ApplicationComponent {
 
-    fun inject(mainActivity: MainActivity)
+    fun getViewModelFactory(): ViewModelFactory
     fun getCommentsScreenComponentFactory(): CommentsScreenComponent.Factory
 
     @Component.Factory

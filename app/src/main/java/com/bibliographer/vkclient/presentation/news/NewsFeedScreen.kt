@@ -7,12 +7,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bibliographer.vkclient.domain.entity.FeedPost
+import com.bibliographer.vkclient.getApplicationComponent
 import com.bibliographer.vkclient.presentation.ViewModelFactory
 import com.bibliographer.vkclient.presentation.news.NewsFeedScreenState
 import com.bibliographer.vkclient.presentation.news.NewsFeedViewModel
@@ -21,14 +23,28 @@ import com.bibliographer.vkclient.presentation.news.PostCard
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun NewsFeedScreen(
-    viewModelFactory: ViewModelFactory,
     paddingValues: PaddingValues,
     onCommentClickListener: (FeedPost) -> Unit
 ) {
-
-    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
+    val component = getApplicationComponent()
+    val viewModel: NewsFeedViewModel = viewModel(factory = component.getViewModelFactory())
     val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
 
+    NewsFeedScreenContent(
+        screenState = screenState,
+        paddingValues = paddingValues,
+        onCommentClickListener = onCommentClickListener,
+        viewModel = viewModel
+    )
+}
+
+@Composable
+private fun NewsFeedScreenContent(
+    screenState: State<NewsFeedScreenState>,
+    paddingValues: PaddingValues,
+    onCommentClickListener: (FeedPost) -> Unit,
+    viewModel: NewsFeedViewModel
+) {
     when (val currentState = screenState.value) {
         is NewsFeedScreenState.Posts -> {
             FeedPosts(
@@ -39,6 +55,7 @@ fun NewsFeedScreen(
                 nextDataIsLoading = currentState.nextDataIsLoading
             )
         }
+
         NewsFeedScreenState.Initial -> {}
         NewsFeedScreenState.Loading -> {
             Box(

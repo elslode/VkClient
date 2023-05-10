@@ -17,7 +17,7 @@ import com.bibliographer.vkclient.presentation.comments.CommentsScreen
 import com.bibliographer.vkclient.ui.theme.NewsFeedScreen
 
 @Composable
-fun MainScreen(viewModelFactory: ViewModelFactory) {
+fun MainScreen() {
 
     val navigationState = rememberNavigationState()
 
@@ -62,7 +62,6 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
                 NewsFeedScreen(
-                    viewModelFactory,
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)
